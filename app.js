@@ -6,6 +6,7 @@ const tourRoute = require('./src/routes/tourRoutes');
 const fileRoute = require('./src/routes/uploadRoute');
 const userMiddleware = require('./src/middleware/usermiddleware');
 const errorHandler = require('./src/middleware/errormiddleware');
+const startcronJob  =require('./src/utils/cronJobs');
 dotenv.config();
 
 const app = express();
@@ -21,5 +22,6 @@ app.use(errorHandler);
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`Server running on port: ${PORT}`);
+    startcronJob ;
 })
 
