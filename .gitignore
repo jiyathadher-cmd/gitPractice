@@ -1,0 +1,14 @@
+node_modules/
+/dist
+/build/
+
+#logs
+npm-debu.log
+warn.error.log
+test-*.log
+
+#environment
+.env
+.env.local
+.DS_Store
+.vscode
