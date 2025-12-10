@@ -2,7 +2,8 @@ const services = require('../services');
 const Tour = require('../models');
 const { validateTourBody } = require('../validator');
 const messages = require('../utils/constants');
-
+const exceljs = require('exceljs');
+const path = require('path');
 exports.createTour = async (req, res, next) => {
     try {
         console.log("Request body:", req.body);
@@ -44,6 +45,43 @@ exports.getAllTours = async (req, res, next) => {
     }
 };
 
+exports.getAllToursToExcel = async (req,res) => {
+    try {
+        const tours = await services.tourService.getAllTours(req);
+
+        const filetittle = 'Tours Data: ' + new Data().toISOString();
+        const workbook = new exceljs.Workbook();
+        worksheet = workbook.addWorksheet('Tours');
+
+        const columns = [
+            {header: "ID", key: "_id", width:30 },
+            {header: "name", key: "name", width:30 },
+            {header: "destination", key: "destination", width:30 },
+            {header: "duration", key: "duration", width:30 },
+            {header: "groupSize", key: "groupSize", width:30 },
+            {header: "difficulty", key: "difficulty", width:30 },
+            {header: "price", key: "price", width:30 },
+            {header: "price", key: "price", width:30 },
+        ];
+
+        worksheet.columns = columns;
+        worksheet.addRows(users);
+        worksheet.autoFilter = 'A1:H1';
+        res.setHeader('Content-type',"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        res.setHeader('Content-Description',`attachment; filename = ${filetittle}.xlsx`);
+        const uploadDir = Path.join(__dirname, '..', 'Excel-exports');
+        const filepath = path.join(uploadDir,`${filetittle}.xlsx`);
+        await workbook.xlsx.writeFile(filepath);
+
+        res.status(200).json({
+            status: "success",
+            message: `Excel file generated successfully!`,
+            filePath: filepath
+        });
+    }catch (err){
+        next(err); 
+    }
+}
 exports.getTour = async (req, res, next) => {
     try {
         const tour = await services.tourService.getTourById(req.params.id);

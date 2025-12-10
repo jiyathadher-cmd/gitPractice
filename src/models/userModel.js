@@ -32,47 +32,26 @@ const userSchema = new mongoose.Schema({
         default: 'user',
     },
 
-    profileImage: { 
+    profileImage: {
         type: String,
         required: false
 
     },
+    stripeCustomerId: {
+        type: String,
+        required: true
+    },
+
     isDeleted: { type: Boolean, default: false },
 }, {
     timestamps: true,
     versionKey: false
 });
 
-// // Methods
-// userSchema.methods.getFullName = function () {
-//     return `${this.name}`;
-// };
-
-// // Statics
-// userSchema.statics.findYoungUsers = function () {
-//     return this.find({ age: { $lt: 30 } });
-// };
-
-// // Query helper
-// userSchema.query.byName = function (name) {
-//     return this.where({ name: new RegExp(name, 'i') });
-// };
-
-// Hash password before saving
 userSchema.pre('save', async function (next) {
     if (this.isModified('password')) {
         this.password = await bcrypt.hash(this.password, 10);
     }
-    next();
-});
-
-// Post delete
-userSchema.post('remove', function (doc) {
-    console.log(`User ${doc.name} removed.`);
-});
-//pre hook
-userSchema.pre('find', function (next) {
-    this.where({ status: 'active' }); 
     next();
 });
 

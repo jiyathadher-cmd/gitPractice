@@ -1,6 +1,11 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const User = require('../models/userModel');  
+const User = require('../models/userModel');
+
+const findUserByEmail = async (email) => {
+    return await User.findOne({ email });
+};
+
 const signupService = async (userData) => {
     const { name, email, password, regNumber, phone, role, age, profileImage } = userData;
 
@@ -81,5 +86,6 @@ module.exports = {
     getAllUsersService,
     getOneUserService,
     updateUserService,
-    deleteUserService
+    deleteUserService,
+    findUserByEmail
 };

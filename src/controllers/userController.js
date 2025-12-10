@@ -4,9 +4,8 @@ const services = require('../services');
 const path = require('path');
 const { validateSignup, validateLogin } = require('../validator');
 const Email = require('../email/onboardingemail.js');
-// const excel = require('exceljs');
 const exceljs = require('exceljs');
-// const { CdpDialog } = require('puppeteer');
+
 const signup = async (req, res, next) => {
 
     if (!req.file) {

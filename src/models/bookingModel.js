@@ -1,47 +1,33 @@
 const mongoose = require('mongoose');
 
-const bookingSchema = new mongoose.Schema(
-    {
-        user: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "User",
-            //required:true,
-        },
-        tour: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Tour",
-            //required:true,
-        },
-        bookingDate: {
-            type: Date,
-            default: Date.now,
-        },
-        numOfPeople: {
-            type: Number,
-            required: true,
-            min: 1,
-        },
-        totalPrice: {
-            type: Number,
-            //required: true,
-        },
-        status: {
-            type: String,
-            enum: ["pending", "confirmed", "cancelled"],
-            default: "pending",
-        },
-        paymentStatus: {
-            type: String,
-            enum: ["paid", "unpaid"],
-            default: "unpaid",
-        },
-        createdAt: {
-            type: Date,
-            default: Date.now,
-        }
+const bookingSchema = new mongoose.Schema({
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
     },
-    { timestamps: true ,versionKey:false }
-);
+    tourId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Tour',
+        required: true
+    },
+    amount: {
+        type: Number,
+        required: true
+    },
+    paymentStatus: {
+        type: String,
+        enum: ["pending", "paid", "failed"],
+        default: "pending"
+    },
+    paymentIntentId: {
+        type: String,
+        required: true
+    },
+    stripeCustomerId: {
+        type: String,
+        required: true
+    }
+}, { timestamps: true });
 
-const Booking = mongoose.model('Booking', bookingSchema);
-module.exports = Booking;
+module.exports = mongoose.model('Booking', bookingSchema);
