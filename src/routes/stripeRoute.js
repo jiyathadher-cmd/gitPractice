@@ -1,11 +1,18 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const stripeController = require('../controllers/stripeController');
-const userMiddleware = require('../middleware/usermiddleware');
+const stripeController = require("../controllers/stripeController");
+const auth = require("../middleware/usermiddleware");
 
-router.post('/create-customer' , userMiddleware, stripeController.createCustomer);
-router.post('/add-card', userMiddleware, stripeController.addCard);
-router.post('/create-paymentIntent', userMiddleware, stripeController.createPaymentIntent);
-router.post('/create-checkoutSession', userMiddleware, stripeController.createCheckoutSession);
+// create customer
+router.post("/customer", auth,stripeController.createCustomer);
+
+// add card
+router.post("/add-card", auth, stripeController.addCard);
+
+// payment intent
+router.post("/payment-intent", auth, stripeController.createPaymentIntent);
+
+// checkout session
+router.post("/checkout-session", auth, stripeController.createCheckoutSession);
 
 module.exports = router;

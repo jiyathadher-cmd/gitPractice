@@ -21,12 +21,10 @@ const bookingSchema = new mongoose.Schema({
         default: "pending"
     },
     paymentIntentId: {
-        type: String,
-        required: true
+        type: String
     },
     stripeCustomerId: {
-        type: String,
-        required: true
+        type: String
     }
 }, { timestamps: true });
 

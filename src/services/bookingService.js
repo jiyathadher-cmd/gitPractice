@@ -4,7 +4,6 @@ const Tour = require("../models/tourModel");
 const Booking = require("../models/bookingModel");
 
 exports.createPaymentIntentService = async (userId, tourId) => {
-
     const tour = await Tour.findById(tourId);
     if (!tour) throw { status: 404, message: "Tour not found" };
 
@@ -21,11 +20,15 @@ exports.createPaymentIntentService = async (userId, tourId) => {
         amount,
         currency: "usd",
         customer: user.stripeCustomerId,
-        metadata: { userId, tourId }
+        metadata: {
+            userId: userId.toString(),  // Ensure string
+            tourId: tourId.toString()   // Ensure string
+        }
     });
+
     await Booking.create({
-        userId,
-        tourId,
+        userId: userId.toString(),
+        tourId: tourId.toString(),
         amount: amount / 100,
         stripeCustomerId: user.stripeCustomerId,
         paymentIntentId: paymentIntent.id,
@@ -40,7 +43,7 @@ exports.createPaymentIntentService = async (userId, tourId) => {
 
 exports.getUserBookingsService = async (userId) => {
     const bookings = await Booking.find({ userId })
-        .populate("tourId", "name price location image")
+        .populate("tourId", "name price destination imageCover")
         .sort({ createdAt: -1 });
 
     return bookings;
@@ -50,10 +53,7 @@ exports.cancelBookingService = async (bookingId, userId) => {
     const booking = await Booking.findOne({ _id: bookingId, userId });
 
     if (!booking) throw { status: 404, message: "Booking not found" };
-
-    if (booking.paymentStatus === "paid") {
-        throw { status: 400, message: "Cannot cancel a paid booking" };
-    }
+    if (booking.paymentStatus === "paid") throw { status: 400, message: "Cannot cancel a paid booking" };
 
     await Booking.deleteOne({ _id: bookingId });
 

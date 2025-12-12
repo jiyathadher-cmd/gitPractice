@@ -12,13 +12,13 @@ module.exports = async (req, res, next) => {
         return res.status(401).json({ success: false, message: 'Authentication required.' });
     }
 
-    let token;
     const parts = authHeader.split(' ');
-    if (parts.length == 2 && /^Bearer$/i.test(parts[0])) {
-        token = parts[1];
-    } else {
+    if (parts.length !== 2 || !/^Bearer$/i.test(parts[0])) {
         return res.status(401).json({ success: false, message: 'Invalid token format.' });
     }
+
+    const token = parts[1];
+
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         const user = await Users.findById(decoded.id);
@@ -34,8 +34,15 @@ module.exports = async (req, res, next) => {
             });
         }
 
-        req.identity = user;
+        // Ensure userId is a string
+        req.user = {
+            id: user._id.toString(),
+            email: user.email,
+            role: user.role
+        };
+
         next();
+
     } catch (err) {
         return res.status(401).json({
             success: false,

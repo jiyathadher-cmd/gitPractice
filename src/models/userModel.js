@@ -36,10 +36,9 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: false
 
-    },
-    stripeCustomerId: {
+    }, stripeCustomerId: {
         type: String,
-        required: true
+        default: null,
     },
 
     isDeleted: { type: Boolean, default: false },

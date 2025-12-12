@@ -1,33 +1,28 @@
 const mongoose = require('mongoose');
-/**
- * @param {string} name - tour's name.
- * @param {string} destination - tour's destination.
- * @param {string} duration - tour's duration .
- * @param {string} groupSize -groupSize
- * @param {string} price - tour's price.
- */
+
 const tourSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-    //   required: [true, 'A tour must have a name'],
       unique: true,
       trim: true,
+      required: [true],
     },
 
     destination: {
       type: String,
-    //   required: [true, 'A tour must have a destination'],
+      required: [true],
     },
 
     duration: {
       type: Number,
-    //   required: [true, 'A tour must have a duration (in days)'],
+      required: [true],
     },
 
     groupSize: {
       type: Number,
-    //   required: [true, 'Please provide the group size'],
+      required: [true],
+      min: [1],
     },
 
     type: {
@@ -37,22 +32,21 @@ const tourSchema = new mongoose.Schema(
 
     difficulty: {
       type: String,
-    //   required:true,
       enum: ['easy', 'medium', 'difficult'],
       default: 'easy',
     },
 
     price: {
       type: Number,
-    //   required: [true, 'A tour must have a price'],
-      min: [0, 'Price must be positive'], // added validation
+      required: [true],
+      min: [0],
     },
 
     summary: {
       type: String,
       trim: true,
-    //   required: [true, 'A tour must have a summary'],
-      maxlength: [200, 'Summary cannot exceed 200 characters'],
+      maxlength: [200],
+      required: [true],
     },
 
     description: {
@@ -62,11 +56,34 @@ const tourSchema = new mongoose.Schema(
 
     startDates: [Date],
 
+    availability: [
+      {
+        date: { type: Date, required: true },
+        seatsLeft: { type: Number, required: true }, 
+      },
+    ],
+
+    bookingsCount: {
+      type: Number,
+      default: 0,
+    },
+
+    status: {
+      type: String,
+      enum: ['active', 'cancelled', 'completed'],
+      default: 'active',
+    },
+
+    // Stripe integration (optional)
+    // stripePriceId: {
+    //   type: String,
+    // },
+
     ratingsAverage: {
       type: Number,
       default: 4.5,
-      min: [1, 'Rating must be above 1.0'],
-      max: [5, 'Rating must be below 5.0'],
+      min: [1],
+      max: [5],
     },
 
     ratingsQuantity: {
@@ -87,11 +104,12 @@ const tourSchema = new mongoose.Schema(
 
     userId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'User'
+      ref: 'User',
     },
   },
-  { timestamps: true,versionKey:false }
+  { timestamps: true, versionKey: false }
 );
 
+
 const Tour = mongoose.model('Tour', tourSchema);
-module.exports = Tour ;
+module.exports = Tour;
